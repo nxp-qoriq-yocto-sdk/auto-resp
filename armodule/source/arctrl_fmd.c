@@ -50,6 +50,7 @@ struct auto_res_port_stats ar_stats;
 /*Object to contain networking configuration*/
 struct auto_res_port_params ar_port_param;
 
+#ifdef AR_DEBUG_API
 void ar_interface_info_dump()
 {
 	int index, j;
@@ -132,6 +133,7 @@ void ar_interface_info_dump()
 
 	return;
 }
+
 void ar_get_fman_stats()
 {
 	struct fm_port *fm_rxport = NULL;
@@ -148,7 +150,7 @@ void ar_get_fman_stats()
 	printk("ICMPv6 Reqquest Cnt = %d\n", ar_stats.echo_icmpv6_ar_cnt);
 	return;
 }
-
+#endif
 
 void ar_process_deep_sleep_event (uint32_t  *out_status)
 {

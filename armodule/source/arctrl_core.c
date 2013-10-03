@@ -56,9 +56,10 @@ struct auto_res_echo_ipv4_info ar_ipv4_echo_db;
 struct auto_res_echo_ipv6_info ar_ipv6_echo_db;
 
 /*Extern definitions*/
+#ifdef AR_DEBUG_API
 extern int  ar_proc_init(void);
 extern void ar_proc_exit(void);
-
+#endif
 
 /*brief Index used by Linux to register driver */
 #define AR_SNMP_DEV_MAJ_NUM (103)
@@ -347,9 +348,10 @@ static int __init ar_init(void)
 	}
 
 
+#ifdef AR_DEBUG_API
 	/*Init Proc interface*/
 	ar_proc_init();
-
+#endif
 	/*Create sysfs entries*/
 	if (ar_create_sysfs() < 0) {
 		PRINT_INFO("Error in creating Sysfs interface\n");
@@ -375,9 +377,10 @@ static int __init ar_init(void)
 		/*Unregister wake-up char device*/
 		unregister_chrdev(AR_WAKEUP_DEV_MAJ_NUM, AR_WAKEUP_DEVICE_NAME);
 
+#ifdef AR_DEBUG_API
 		/*Unregister proc interface*/
 		ar_proc_exit();
-
+#endif
 		/*Unregister sysfs interface*/
 		ar_sysfs_exit();
 
@@ -394,12 +397,13 @@ static void  __exit ar_exit(void)
 	/*Unregister wake-up char device*/
 	unregister_chrdev(AR_WAKEUP_DEV_MAJ_NUM, AR_WAKEUP_DEVICE_NAME);
 
-	/*Unregister proc interface*/
-	ar_proc_exit();
-
 	/*Unregister sysfs interface*/
 	ar_sysfs_exit();
 
+#ifdef AR_DEBUG_API
+	/*Unregister proc interface*/
+	ar_proc_exit();
+#endif
 	/*Unregister with Linux PM module*/
 	ar_pm_unregister();
 
