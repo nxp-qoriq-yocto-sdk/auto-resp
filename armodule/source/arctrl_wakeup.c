@@ -92,19 +92,10 @@ int32_t ar_wakeup_get_free_index(char *prot)
 uint8_t ar_wakeup_get_prot_code(uint8_t *pProtName)
 {
 	uint32_t index;
-<<<<<<< HEAD
 	for (index = 0; index < ar_wakeuptblsize; index++) {
 		if (!strncmp(pProtName, prot_info[index].prot_name,
 						strlen(pProtName)))
 			return prot_info[index].prot_code;
-=======
-	uint8_t prot_code = 0x00;
-	for (index = 0; index < iptblsize; index++) {
-		if (!strncmp(pProtName, prot_info[index].prot_name, 4)) {
-			prot_code = prot_info[index].prot_code;
-			break;
-		}
->>>>>>> df0bbbc... AR: Adding User application to configure wake-up rules.
 	}
 	return -1;
 }
