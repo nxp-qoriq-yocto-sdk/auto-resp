@@ -15,8 +15,6 @@
 #include <linux/fs.h>
 #include <asm-generic/ioctl.h>
 
-#define AR_WAKEUP_TABLE_SIZE 16
-
 typedef enum ar_wakeup_tool_event {
 	CONFIG_WAKEUP_NULL = 0x0,
 	CONFIG_WAKEUP_UDP_RULE = 0x1,

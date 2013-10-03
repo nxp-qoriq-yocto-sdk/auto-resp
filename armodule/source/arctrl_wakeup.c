@@ -14,21 +14,50 @@
 #include <linux/slab.h>
 #include "ar_common.h"
 
+extern struct auto_res_tables_sizes *p_ar_maxsize;
 
 /*Wake-up database which is to be sent to FM Ucode*/
-uint32_t ar_wakeuptblsize = AR_WAKEUP_TABLE_SIZE;
-auto_res_port_filtering_e ar_wakeup_udp_entity[AR_WAKEUP_TABLE_SIZE];
-auto_res_port_filtering_e ar_wakeup_tcp_entity[AR_WAKEUP_TABLE_SIZE];
-uint8_t ar_wakeup_ip_prot_tbl[AR_WAKEUP_TABLE_SIZE];
+uint32_t ar_wakeuptblsize;
+uint32_t udptblsize, tcptblsize, iptblsize;
+auto_res_port_filtering_e *ar_wakeup_udp_entity;
+auto_res_port_filtering_e *ar_wakeup_tcp_entity;
+uint8_t *ar_wakeup_ip_prot_tbl;
 auto_res_filtering_db ar_wakeup_db;
 
 /*Name-Protocol mapping*/
-struct prot prot_info[AR_WAKEUP_TABLE_SIZE] = {{"ICMP\n", 0x01},
-						{"IGMP\n", 0x02} };
+struct prot prot_info[10] = {{"ICMP\n", 0x01},
+				{"IGMP\n", 0x02} };
 
 
 uint32_t ar_wakeup_init_db()
 {
+	ar_wakeuptblsize = p_ar_maxsize->max_num_of_ip_prot_filtering;
+	udptblsize = p_ar_maxsize->max_num_of_udp_port_filtering;
+	tcptblsize = p_ar_maxsize->max_num_of_tcp_port_filtering;
+	iptblsize  = p_ar_maxsize->max_num_of_ip_prot_filtering;
+
+	ar_wakeup_udp_entity = (auto_res_port_filtering_e *)kzalloc((sizeof(auto_res_port_filtering_e) *
+							udptblsize), GFP_KERNEL);
+	if (!ar_wakeup_udp_entity) {
+		PRINT_INFO("Error in allocating the space\n");
+		return -AR_MEMORY_UNAVALABLE_ERROR;
+	}
+	ar_wakeup_tcp_entity = (auto_res_port_filtering_e *)kzalloc((sizeof(auto_res_port_filtering_e) *
+							tcptblsize), GFP_KERNEL);
+	if (!ar_wakeup_tcp_entity) {
+		PRINT_INFO("Error in allocating the space\n");
+		kzfree(ar_wakeup_udp_entity);
+		return -AR_MEMORY_UNAVALABLE_ERROR;
+	}
+
+	ar_wakeup_ip_prot_tbl = (uint8_t *)kzalloc((sizeof(uint8_t) * iptblsize), GFP_KERNEL);
+	if (!ar_wakeup_ip_prot_tbl) {
+		PRINT_INFO("Error in allocating the space\n");
+		kzfree(ar_wakeup_tcp_entity);
+		kzfree(ar_wakeup_udp_entity);
+		return -AR_MEMORY_UNAVALABLE_ERROR;
+	}
+
 	ar_wakeup_db.ip_prot_table_ptr = ar_wakeup_ip_prot_tbl;
 	ar_wakeup_db.udp_ports_table_ptr = ar_wakeup_udp_entity;
 	ar_wakeup_db.tcp_ports_table_ptr = ar_wakeup_tcp_entity;
@@ -40,19 +69,19 @@ int32_t ar_wakeup_get_free_index(char *prot)
 	int32_t index;
 
 	if (!strcmp(prot, "UDP")) {
-		for (index = 0; index < ar_wakeuptblsize; index++) {
+		for (index = 0; index < udptblsize; index++) {
 			if (ar_wakeup_udp_entity[index].src_port == 0x0
 				&& ar_wakeup_udp_entity[index].dst_port == 0x0)
 					return index;
 		}
 	} else if (!strcmp(prot, "TCP")) {
-		for (index = 0; index < ar_wakeuptblsize; index++) {
+		for (index = 0; index < tcptblsize; index++) {
 			if (ar_wakeup_tcp_entity[index].src_port == 0x0
 				&& ar_wakeup_tcp_entity[index].dst_port == 0x0)
 					return index;
 		}
 	} else if (!strcmp(prot, "IP_PROT")) {
-		for (index = 0; index < ar_wakeuptblsize; index++) {
+		for (index = 0; index < iptblsize; index++) {
 			if (ar_wakeup_ip_prot_tbl[index] == 0x00)
 				return index;
 		}
@@ -63,10 +92,19 @@ int32_t ar_wakeup_get_free_index(char *prot)
 uint8_t ar_wakeup_get_prot_code(uint8_t *pProtName)
 {
 	uint32_t index;
+<<<<<<< HEAD
 	for (index = 0; index < ar_wakeuptblsize; index++) {
 		if (!strncmp(pProtName, prot_info[index].prot_name,
 						strlen(pProtName)))
 			return prot_info[index].prot_code;
+=======
+	uint8_t prot_code = 0x00;
+	for (index = 0; index < iptblsize; index++) {
+		if (!strncmp(pProtName, prot_info[index].prot_name, 4)) {
+			prot_code = prot_info[index].prot_code;
+			break;
+		}
+>>>>>>> df0bbbc... AR: Adding User application to configure wake-up rules.
 	}
 	return -1;
 }
