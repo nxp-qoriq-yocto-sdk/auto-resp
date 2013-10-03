@@ -14,16 +14,21 @@
 #include <linux/slab.h>
 #include "ar_common.h"
 
-uint32_t ar_snmp_tblsize = AR_SNMP_TABLE_SIZE;
+extern struct auto_res_tables_sizes *p_ar_maxsize;
+uint32_t ar_snmp_tblsize;
 
 /*SNMP database which is to be sent to FM Ucode*/
-auto_res_snmp_e ar_snmp_entity[AR_SNMP_TABLE_SIZE];
+auto_res_snmp_e *ar_snmp_entity;
 auto_res_snmp_db ar_snmp_db;
 
 uint32_t ar_snmp_init_db()
 {
+	ar_snmp_tblsize = p_ar_maxsize->max_num_of_snmp_entries;
+	ar_snmp_entity = (auto_res_snmp_e *)kzalloc((sizeof(auto_res_snmp_e) * ar_snmp_tblsize),
+							GFP_KERNEL);
+
 	memset(&ar_snmp_db, 0, sizeof(ar_snmp_db));
-	memset(ar_snmp_entity, 0, sizeof(ar_snmp_entity));
+	memset(ar_snmp_entity, 0, sizeof(auto_res_snmp_e) * ar_snmp_tblsize);
 	ar_snmp_db.community_read_write_string = (uint8_t *)kzalloc(16, GFP_KERNEL);
 	if (!ar_snmp_db.community_read_write_string) {
 		PRINT_INFO("Memory Allocation failed\n");

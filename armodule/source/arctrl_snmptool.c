@@ -26,7 +26,7 @@ static int 		ar_open_count;
 
 
 /* Interfaces provided by this driver*/
-const struct file_operations ar_interface_fops = {
+const struct file_operations ar_snmp_interface_fops = {
 	.open 		=	ar_interface_open,
 	.release 	=	ar_interface_release,
 	.unlocked_ioctl	=	ar_interface_ioctl,
