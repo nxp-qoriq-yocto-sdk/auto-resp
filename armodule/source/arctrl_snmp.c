@@ -23,7 +23,11 @@ auto_res_snmp_db ar_snmp_db;
 
 uint32_t ar_snmp_init_db()
 {
-	ar_snmp_tblsize = p_ar_maxsize->max_num_of_snmp_entries;
+	char private_str[] = "private";
+	char public_str[] = "public";
+	uint32_t priv_str_len, pub_str_len;
+
+	ar_snmp_tblsize = p_ar_maxsize->max_num_of_snmp_oid_entries;
 	ar_snmp_entity = (auto_res_snmp_e *)kzalloc((sizeof(auto_res_snmp_e) * ar_snmp_tblsize),
 							GFP_KERNEL);
 
@@ -40,11 +44,16 @@ uint32_t ar_snmp_init_db()
 		PRINT_INFO("Memory Allocation failed\n");
 		return -AR_SUCCESS;
 	}
+	priv_str_len = strlen(private_str);
+	pub_str_len = strlen(public_str);
 
-	memcpy(ar_snmp_db.community_read_write_string, "private", 16);
-	memcpy(ar_snmp_db.community_read_only_string, "public", 16);
-	ar_snmp_db.getall_flag = 0;
-	ar_snmp_db.auto_res_table = ar_snmp_entity;
+	memcpy(ar_snmp_db.community_read_write_string, private_str, priv_str_len);
+	memcpy(ar_snmp_db.community_read_only_string, public_str, pub_str_len);
+	ar_snmp_db.community_read_write_string[priv_str_len] = '\0';
+	ar_snmp_db.community_read_only_string[pub_str_len] = '\0';
+	ar_snmp_db.control = 0;
+	ar_snmp_db.max_snmp_msg_length = AR_MAX_SNMP_MSG_SIZE;
+	ar_snmp_db.oid_table = ar_snmp_entity;
 	return AR_SUCCESS;
 }
 
@@ -61,7 +70,7 @@ uint32_t ar_snmp_get_free_index(auto_res_snmp_e *pInfo)
 uint32_t ar_snmp_get_index(auto_res_snmp_e *pInfo)
 {
 	int index;
-	for (index = 0; index < ar_snmp_db.table_size; index++) {
+	for (index = 0; index < ar_snmp_db.oid_table_size; index++) {
 		if (!(strcmp(pInfo->oidVal, ar_snmp_entity[index].oidVal)))
 			return index;
 	}
@@ -93,7 +102,7 @@ uint32_t ar_snmp_recv_agent_config(unsigned int cmd, auto_res_snmp_e *pInfo)
 					ar_snmp_entity[retVal].oidVal  = pInfo->oidVal;
 					ar_snmp_entity[retVal].resSize = pInfo->resSize;
 					ar_snmp_entity[retVal].resVal  = pInfo->resVal;
-					ar_snmp_db.table_size++;
+					ar_snmp_db.oid_table_size++;
 					break;
 				} else
 					PRINT_INFO("Maximum limit reached for SNMP entries\n");
@@ -105,7 +114,7 @@ uint32_t ar_snmp_recv_agent_config(unsigned int cmd, auto_res_snmp_e *pInfo)
 			/*Get the entry which is to be deleted*/
 			retVal = ar_snmp_get_index(pInfo);
 			if (retVal != -1) {
-				while (retVal < ar_snmp_db.table_size - 1) {
+				while (retVal < ar_snmp_db.oid_table_size - 1) {
 					ar_snmp_entity[retVal].oidSize =
 						ar_snmp_entity[retVal + 1].oidSize;
 					ar_snmp_entity[retVal].resSize =
@@ -122,7 +131,7 @@ uint32_t ar_snmp_recv_agent_config(unsigned int cmd, auto_res_snmp_e *pInfo)
 				kfree(ar_snmp_entity[retVal].resVal);
 				ar_snmp_entity[retVal].oidVal = NULL;
 				ar_snmp_entity[retVal].resVal = NULL;
-				ar_snmp_db.table_size--;
+				ar_snmp_db.oid_table_size--;
 				break;
 			}
 			return -AR_SUCCESS;
@@ -139,7 +148,7 @@ uint32_t ar_snmp_recv_agent_config(unsigned int cmd, auto_res_snmp_e *pInfo)
 
 void ar_snmp_config_getall_flag_str(char *pConfigStr)
 {
-	ar_snmp_db.getall_flag = *pConfigStr-'0';
+	ar_snmp_db.control = *pConfigStr-'0';
 	kfree(pConfigStr);
 	return;
 }

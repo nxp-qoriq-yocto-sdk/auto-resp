@@ -81,18 +81,18 @@ void ar_interface_info_dump()
 	printk("=========================================================\n");
 	printk("index\toidSize\t\toidVal\t\tresSize\t\tresVal\n");
 	printk("=========================================================\n");
-	for (index = 0; index < ar_snmp_db.table_size; index++) {
-		printk("%d\t%d\t", index, ar_snmp_db.auto_res_table[index].oidSize);
-		for (j = 0; j < ar_snmp_db.auto_res_table[index].oidSize; j++)
-			printk("%x", ar_snmp_db.auto_res_table[index].oidVal[j]);
-		printk("\t%d\t", ar_snmp_db.auto_res_table[index].resSize);
-		for (j = 0; j < ar_snmp_db.auto_res_table[index].resSize; j++)
-			printk("%hhx", ar_snmp_db.auto_res_table[index].resVal[j]);
+	for (index = 0; index < ar_snmp_db.oid_table_size; index++) {
+		printk("%d\t%d\t", index, ar_snmp_db.oid_table[index].oidSize);
+		for (j = 0; j < ar_snmp_db.oid_table[index].oidSize; j++)
+			printk("%x", ar_snmp_db.oid_table[index].oidVal[j]);
+		printk("\t%d\t", ar_snmp_db.oid_table[index].resSize);
+		for (j = 0; j < ar_snmp_db.oid_table[index].resSize; j++)
+			printk("%hhx", ar_snmp_db.oid_table[index].resVal[j]);
 		printk("\n");
 	}
 	printk("getall_flag = %d\tcomunity_public_string = %s\
 					comunity_privat_string = %s\n",
-					ar_snmp_db.getall_flag,
+					ar_snmp_db.control,
 					ar_snmp_db.community_read_write_string,
 					ar_snmp_db.community_read_only_string);
 	printk("===========================================================\n");

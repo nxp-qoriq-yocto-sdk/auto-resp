@@ -109,9 +109,9 @@ ssize_t ar_snmp_flag_store(struct kobject *kobj,
 {
 	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
 	sscanf(buf, "%s", pArg);
-	ar_snmp_db.getall_flag = *pArg-'0';
+	ar_snmp_db.control = *pArg-'0';
 #ifdef AR_DEBUG
-	printk("%d\n", ar_snmp_db.getall_flag);
+	printk("%d\n", ar_snmp_db.control);
 #endif
 	kfree(pArg);
 	return count;
