@@ -7,7 +7,6 @@
 # */
 
 # Required include definitions
-include $(KERNEL_PATH)/.config
 include $(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/ncsw_config.mk
 
 #Required extra flags
@@ -17,14 +16,14 @@ EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/
 EXTRA_CFLAGS +=	-I$(KERNEL_PATH)/arch/powerpc/include/asm
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/net/bridge/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/net/
-EXTRA_CFLAGS += -I$(PWD)/include/
+EXTRA_CFLAGS += -I$(PWD)/armodule/include/
 
 #Debug Flag
-#EXTRA_CFLAGS += -DAR_DEBUG
-#EXTRA_CFLAGS += -DAR_DEBUG_API
+EXTRA_CFLAGS += -DAR_DEBUG
+EXTRA_CFLAGS += -DAR_DEBUG_API
 
 #Required Variables
-CURDIR = $(PWD)/source
+CURDIR = $(PWD)/armodule/source
 
 obj-m += ar.o
 
@@ -40,6 +39,6 @@ ar-y := arctrl_core.o\
 
 all:
 	make ARCH=powerpc -C $(KERNEL_PATH) M=$(CURDIR) modules
-
+	cp ar.ko $(PWD)/bin/.
 clean:
 	make ARCH=powerpc -C $(KERNEL_PATH) M=$(CURDIR) clean

@@ -24,7 +24,6 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 AR = $(CROSS_COMPILE)ar
 RM = rm
 
-# These are defaults.  Individual makefiles might override them.
 CLIBS = -L ../lib-api/. -lar_snmp_api
 CFLAGS = -g -O -Wall
 
@@ -42,12 +41,10 @@ execs:	$(EXECS)
 
 ar_snmp_tool:	$(OBJS) ../lib-api/libar_snmp_api.a
 	$(CC) -o $@ $(CFLAGS) $@.o $(CLIBS)
+	cp ar_snmp_tool $(PWD)/bin/.
+	cp ../ar_snmp_cfg $(PWD)/bin/.
 clean:
-	$(RM) -f $(EXECS) $(OBJS) $(DEPS) *.d *.a *.tar
-
-tar:	clean
-	$(RM) -rf *~
-	tar cvf msc7120_app.tar *
+	$(RM) -f $(EXECS) $(OBJS) $(DEPS) *.d *.a
 
 -include $(DEPS)
 
