@@ -12,6 +12,7 @@
 /***************************************************************************/
 #include <linux/kernel.h>
 #include <linux/slab.h>
+#include <dpaa_eth.h>
 #include "ar_common.h"
 
 extern struct auto_res_tables_sizes *p_ar_maxsize;
