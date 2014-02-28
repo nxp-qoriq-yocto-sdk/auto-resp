@@ -73,15 +73,21 @@ extern void ar_proc_exit(void);
 extern const struct file_operations ar_snmp_interface_fops;
 extern const struct file_operations ar_wakeup_interface_fops;
 
-void ar_intf_init_db()
+int32_t ar_intf_init_db()
 {
 	struct fm_port *fm_rxport = NULL;
 	struct fm_port *fm_txport = NULL;
 
 	ar_get_fm_port(&fm_rxport, &fm_txport);
+	if (!fm_rxport && !fm_txport)
+		return -AR_INIT_ERROR;
 
 	/*Get Maximum table sizes from FMAN*/
 	p_ar_maxsize = fm_port_get_autores_maxsize(fm_rxport);
+	if (!p_ar_maxsize) {
+		PRINT_INFO("Failure to get information from FMAN\n");
+		return -AR_INIT_ERROR;
+	}
 	ar_arptblsize = p_ar_maxsize->max_num_of_arp_entries;
 	ar_ndptblsize = p_ar_maxsize->max_num_of_ndp_entries;
 
@@ -91,7 +97,7 @@ void ar_intf_init_db()
 								*ar_arptblsize), GFP_KERNEL);
 	if (!ar_arp_tbl) {
 		PRINT_INFO("Failure to allocate memory");
-		return;
+		return -AR_MEMORY_UNAVALABLE_ERROR;
 	}
 	/*NDP*/
 	ar_ndp_tem_tbl = (struct auto_res_ndp_entry *)kzalloc((sizeof(struct auto_res_ndp_entry)
@@ -99,7 +105,7 @@ void ar_intf_init_db()
 	if (!ar_ndp_tem_tbl) {
 		PRINT_INFO("Failure to allocate memory");
 		kzfree((void *)ar_arp_tbl);
-		return;
+		return -AR_MEMORY_UNAVALABLE_ERROR;
 	}
 	ar_ndp_tgt_tbl = (struct auto_res_ndp_entry *)kzalloc((sizeof(struct auto_res_ndp_entry)
 								*ar_ndptblsize), GFP_KERNEL);
@@ -107,7 +113,7 @@ void ar_intf_init_db()
 		PRINT_INFO("Failure to allocate memory");
 		kzfree((void *)ar_arp_tbl);
 		kzfree((void *)ar_ndp_tem_tbl);
-		return;
+		return -AR_MEMORY_UNAVALABLE_ERROR;
 	}
 
 	memset(&ar_arp_db, 0, sizeof(struct auto_res_arp_info));
@@ -123,7 +129,7 @@ void ar_intf_init_db()
 	ar_ipv4_echo_db.auto_res_table = ar_arp_tbl;
 	ar_ipv6_echo_db.auto_res_table = ar_ndp_tgt_tbl;
 
-	return;
+	return AR_SUCCESS;
 }
 EXPORT_SYMBOL(ar_intf_init_db);
 
@@ -141,6 +147,10 @@ void ar_get_fm_port(struct fm_port **rxport,
 	struct mac_device *mac_dev;
 
 	netdev = dev_get_by_name(&init_net, ar_resport);
+	if (!netdev) {
+		PRINT_INFO("Device not found\n");
+		return;
+	}
 	if (netdev->priv_flags & IFF_802_1Q_VLAN) {
 		netdev = vlan_dev_priv(netdev)->real_dev;
 	}
@@ -149,7 +159,8 @@ void ar_get_fm_port(struct fm_port **rxport,
 		mac_dev = priv->mac_dev;
 		*rxport = mac_dev->port_dev[RX];
 		*txport = mac_dev->port_dev[TX];
-	}
+	} else
+		PRINT_INFO("Auto response port is down\n");
 	return;
 }
 EXPORT_SYMBOL(ar_get_fm_port);
@@ -359,7 +370,24 @@ static int __init ar_init(void)
 	}
 
 	/*Init ARP/ND database*/
-	ar_intf_init_db();
+	if (ar_intf_init_db() < 0) {
+		PRINT_INFO("Error in initialization\n");
+
+		/*Unregister SNMP char device*/
+		unregister_chrdev(AR_SNMP_DEV_MAJ_NUM, AR_SNMP_DEVICE_NAME);
+
+		/*Unregister wake-up char device*/
+		unregister_chrdev(AR_WAKEUP_DEV_MAJ_NUM, AR_WAKEUP_DEVICE_NAME);
+
+#ifdef AR_DEBUG_API
+		/*Unregister proc interface*/
+		ar_proc_exit();
+#endif
+		/*Unregister sysfs interface*/
+		ar_sysfs_exit();
+
+		return -AR_INIT_ERROR;
+	}
 
 	/*Init SNMP database*/
 	ar_snmp_init_db();

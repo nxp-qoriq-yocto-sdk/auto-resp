@@ -34,7 +34,7 @@ typedef enum {
 	AR_GET_INFO_ERROR
 } ar_ret_status;
 
-void ar_intf_init_db(void);
+int32_t ar_intf_init_db(void);
 
 void ar_process_deep_sleep_event (uint32_t  *out_status);
 
