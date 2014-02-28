@@ -36,10 +36,13 @@ MODULE_DESCRIPTION("Auto Response");
 MODULE_LICENSE("GPL");
 
 /*Auto Response port and protocol table size*/
-char ar_resport[10] = "fm1-mac5";
+char *ar_resport = "fm1-mac5";
 struct auto_res_tables_sizes *p_ar_maxsize;
 uint32_t ar_arptblsize;
 uint32_t ar_ndptblsize;
+
+module_param(ar_resport, charp, 0644);
+MODULE_PARM_DESC(ar_resport, "Configuring Auto Response port");
 
 /*Tables maintained at AR CNTRL which will be sent to FMD*/
 /*ARP Table*/
