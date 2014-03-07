@@ -11,10 +11,19 @@
  *
  */
 /**************************************************************************/
+#include <linux/notifier.h>
 
-/*API to get trigger from Linux PM module*/
-int ar_suspend_noirq(struct device *dev);
-int ar_resume_noirq(struct device *dev);
+/*API to get trigger from Linux PM module through notifier chain calls*/
+int ar_handle_pm_event(struct notifier_block *nb,
+			   unsigned long event, void *ptr);
+/*API to suspend the autoresponse module*/
+int ar_suspend_noirq(void);
+
+/*API to resume the autoresponse module*/
+int ar_resume_noirq(void);
+
 /*API to register with Linux PM module*/
 int ar_pm_register(void);
+
+/*API to unregister with Linux PM module*/
 void ar_pm_unregister(void);

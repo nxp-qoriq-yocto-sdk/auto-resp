@@ -18,36 +18,30 @@
 #include <linux/module.h>
 #include <ar_common.h>
 #include <ar_pm.h>
+#include <linux/notifier.h>
+#include <linux/suspend.h>
 
-static struct dev_pm_ops ar_pm_ops = {
-	.suspend_noirq = ar_suspend_noirq,
-	.resume_noirq = ar_resume_noirq
+static struct notifier_block ar_notifier_block = {
+	.notifier_call = ar_handle_pm_event,
 };
 
-#define AR_PM_OPS (&ar_pm_ops)
+int ar_handle_pm_event(struct notifier_block *nb,
+			   unsigned long event, void *unused)
+{
+	switch (event) {
+	case PM_SUSPEND_PREPARE:
+		ar_suspend_noirq();
+		break;
+	case PM_POST_SUSPEND:
+		ar_resume_noirq();
+		break;
+	default:
+		break;
+	}
+	return 0;
+}
 
-static const struct of_device_id ar_match[] = {
-	{
-		.compatible	= "fsl,auto-res"
-	},
-	{}
-};
-MODULE_DEVICE_TABLE(of, ar_match);
-
-
-/* Structure for a device driver */
-static struct platform_driver ar_driver = {
-	.driver = {
-		.name = "fsl-autores",
-		.of_match_table = ar_match,
-		.owner = THIS_MODULE,
-		.pm = AR_PM_OPS,
-	},
-	.probe = NULL,
-	.remove = NULL,
-};
-
-int ar_suspend_noirq(struct device *dev)
+int ar_suspend_noirq(void)
 {
 	uint32_t out_status;
 
@@ -61,7 +55,7 @@ int ar_suspend_noirq(struct device *dev)
 	return 0;
 }
 
-int ar_resume_noirq(struct device *dev)
+int ar_resume_noirq(void)
 {
 #ifdef AR_DEBUG
 	printk("%s invoked\n", __FUNCTION__);
@@ -71,15 +65,15 @@ int ar_resume_noirq(struct device *dev)
 
 int ar_pm_register(void)
 {
-	int retVal;
-	retVal = platform_driver_register(&ar_driver);
-	if (retVal < 0)
+	int retval;
+	retval = register_pm_notifier(&ar_notifier_block);
+	if (retval < 0)
 		printk("Error in registering to PM module\n");
-	return retVal;
+	return retval;
 }
 
 void ar_pm_unregister(void)
 {
-	platform_driver_unregister(&ar_driver);
+	unregister_pm_notifier(&ar_notifier_block);
 	return;
 }
