@@ -16,6 +16,7 @@
 #include <linux/string.h>
 #include <linux/errno.h>
 #include <linux/unistd.h>
+#include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/sysctl.h>
 #include <linux/proc_fs.h>

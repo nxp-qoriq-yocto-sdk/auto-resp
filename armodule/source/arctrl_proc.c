@@ -16,9 +16,11 @@
 #include <linux/string.h>
 #include <linux/errno.h>
 #include <linux/unistd.h>
+#include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/sysctl.h>
 #include <linux/proc_fs.h>
+#include <internal.h>
 #include <linux/types.h>
 #include <linux/stat.h>
 #include <linux/fcntl.h>
@@ -37,8 +39,12 @@ EXPORT_SYMBOL(ar_dir);
 uint32_t *ar_data;
 EXPORT_SYMBOL(ar_data);
 
-int ar_handle_deep_sleep_event(struct file *file, const char __user *buffer,
-		unsigned long count, void *data)
+const struct file_operations proc_fops = {
+	.write = ar_handle_deep_sleep_event
+};
+
+ssize_t ar_handle_deep_sleep_event(struct file *file, const char __user *buffer,
+		size_t count, loff_t *data)
 {
 	uint32_t out_status;
 
@@ -73,14 +79,14 @@ int ar_proc_init(void)
 		return -ENOMEM;
 	}
 
-	proc_file = create_proc_entry("autoresponse/deep_sleep_mode", 0644, NULL);
+	proc_file = proc_create("autoresponse/deep_sleep_mode", 0644,
+							NULL, &proc_fops);
 	if (!proc_file) {
 		PRINT_INFO("Cannot create proc entry\n");
 		remove_proc_entry("autoresponse", NULL);
 		kzfree((const void *)ar_data);
 		return -EFAULT;
 	}
-	proc_file->write_proc = ar_handle_deep_sleep_event;
 	proc_file->data = ar_data;
 
 	return 0;

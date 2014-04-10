@@ -14,6 +14,7 @@ EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/inc/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/dpa/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/
 EXTRA_CFLAGS +=	-I$(KERNEL_PATH)/arch/powerpc/include/asm
+EXTRA_CFLAGS +=	-I$(KERNEL_PATH)/fs/proc/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/net/bridge/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/net/
 EXTRA_CFLAGS += -I$(PWD)/armodule/include/

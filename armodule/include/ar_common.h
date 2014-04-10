@@ -55,5 +55,8 @@ void  ar_proc_exit(void);
 
 int  ar_proc_init(void);
 
+ssize_t ar_handle_deep_sleep_event(struct file *file, const char __user *buffer,
+		size_t count, loff_t *data);
+
 /*Macro for debug print*/
 #define PRINT_INFO(fmt) printk("[%s:%d]:%s", __FUNCTION__, __LINE__, fmt)
