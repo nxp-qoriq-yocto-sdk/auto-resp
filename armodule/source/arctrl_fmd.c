@@ -195,6 +195,8 @@ void ar_process_deep_sleep_event (uint32_t  *out_status)
 	ar_port_param.p_auto_res_snmp_info 	= &ar_snmp_db;
 	ar_port_param.p_auto_res_filtering_info	= &ar_wakeup_db;
 
+	/*Before entering deep sleep, configure MAC for wakeup sources*/
+	device_set_wakeup_enable(netdev->dev.parent, ar_wakeup_src);
 	/*Send network device information to the FMD for
 	  configuring FM ucode. Wait for the ack*/
 	retcode = fm_port_enter_autores_for_deepsleep(fm_rxport, &ar_port_param);
