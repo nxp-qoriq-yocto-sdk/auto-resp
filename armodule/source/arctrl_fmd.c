@@ -205,3 +205,19 @@ void ar_process_deep_sleep_event (uint32_t  *out_status)
 	return;
 }
 EXPORT_SYMBOL(ar_process_deep_sleep_event);
+
+void ar_process_resume_event(int32_t  *out_status)
+{
+	struct fm_port *fm_rxport = NULL;
+	struct fm_port *fm_txport = NULL;
+
+	/*Get FM ports*/
+	ar_get_fm_port(&fm_rxport, &fm_txport);
+	if ((!fm_rxport) || (!fm_txport)) {
+		PRINT_INFO("Error in fetching FMAN RX/TX port\n");
+		*out_status = -AR_GET_INFO_ERROR;
+		return;
+	}
+	fm_port_exit_auto_res_for_deep_sleep(fm_rxport, fm_txport);
+	return;
+}

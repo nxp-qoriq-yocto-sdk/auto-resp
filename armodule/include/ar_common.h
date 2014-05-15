@@ -38,6 +38,8 @@ int32_t ar_intf_init_db(void);
 
 void ar_process_deep_sleep_event (uint32_t  *out_status);
 
+void ar_process_resume_event(int32_t  *out_status);
+
 struct net_device *ar_get_device(void);
 
 uint16_t ar_get_vlanid(struct net_device *dev);

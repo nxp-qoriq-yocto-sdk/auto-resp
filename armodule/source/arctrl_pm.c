@@ -57,9 +57,16 @@ int ar_suspend_noirq(void)
 
 int ar_resume_noirq(void)
 {
+	int32_t out_status;
 #ifdef AR_DEBUG
 	printk("%s invoked\n", __FUNCTION__);
 #endif
+	ar_process_resume_event(&out_status);
+	if (out_status < 0) {
+		printk("Error in resumeing: Error Code = %d\n",
+							out_status);
+		return out_status;
+	}
 	return 0;
 }
 
