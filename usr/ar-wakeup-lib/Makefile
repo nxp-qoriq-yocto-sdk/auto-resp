@@ -24,7 +24,12 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 AR = $(CROSS_COMPILE)ar
 RM = rm
 
-CFLAGS = -g -O -Wall
+ifdef SYSROOT
+  CFLAGS = --sysroot=$(SYSROOT) -g -O -Wall
+  LDFLAGS = --sysroot=$(SYSROOT)
+else
+  CFLAGS = -g -O -Wall
+endif
 
 SRCS = ar_wakeup_tool.c
 EXECS = $(SRCS:%.c=%)

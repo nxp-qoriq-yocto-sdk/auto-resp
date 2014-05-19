@@ -24,7 +24,11 @@ OBJCOPY = $(CROSS_COMPILE)objcopy
 AR = $(CROSS_COMPILE)ar
 RM = rm
 
-CFLAGS = -g -O -Wall
+ifdef SYSROOT
+  CFLAGS = --sysroot=$(SYSROOT) -g -O -Wall
+else
+  CFLAGS = -g -O -Wall
+endif
 
 SRCS = ar_snmp_api.c
 EXECS = $(SRCS:%.c=%)
