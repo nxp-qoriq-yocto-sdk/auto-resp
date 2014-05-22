@@ -23,6 +23,9 @@
 #define MAJOR(dev)      ((unsigned int) ((dev) >> MINORBITS))
 #define MINOR(dev)      ((unsigned int) ((dev) & MINORMASK))
 
+#define AR_ENABLE	1
+#define AR_DISABLE	0
+
 /* Common Return status used between SW stack and FM ucode*/
 typedef enum {
 	AR_SUCCESS = 0,
@@ -60,7 +63,7 @@ int  ar_proc_init(void);
 ssize_t ar_handle_deep_sleep_event(struct file *file, const char __user *buffer,
 		size_t count, loff_t *data);
 
-extern uint32_t ar_wakeup_src;
+extern int32_t ar_wakeup_src;
 
 /*Macro for debug print*/
 #define PRINT_INFO(fmt) printk("[%s:%d]:%s", __FUNCTION__, __LINE__, fmt)

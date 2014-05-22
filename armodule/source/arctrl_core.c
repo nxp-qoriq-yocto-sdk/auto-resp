@@ -38,7 +38,7 @@ MODULE_LICENSE("GPL");
 
 /*Auto Response port and protocol table size*/
 char *ar_resport = "fm1-mac5";
-uint32_t ar_wakeup_src = TRUE;
+int32_t ar_wakeup_src = AR_ENABLE;
 struct auto_res_tables_sizes *p_ar_maxsize;
 uint32_t ar_arptblsize;
 uint32_t ar_ndptblsize;
