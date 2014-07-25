@@ -220,5 +220,6 @@ void ar_process_resume_event(int32_t  *out_status)
 		return;
 	}
 	fm_port_exit_auto_res_for_deep_sleep(fm_rxport, fm_txport);
+	*out_status = AR_SUCCESS;
 	return;
 }
