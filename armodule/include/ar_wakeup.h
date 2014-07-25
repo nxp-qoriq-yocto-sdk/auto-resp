@@ -15,6 +15,11 @@
 #include <linux/fs.h>
 #include <asm-generic/ioctl.h>
 
+/***************************Macro Definition********************************/
+#define IP_PROTOCOL_NAME_LENGTH		25
+#define IP_PROTOCOL_DB_SIZE		255
+/***************************************************************************/
+
 typedef enum ar_wakeup_tool_event {
 	CONFIG_WAKEUP_NULL = 0x0,
 	CONFIG_WAKEUP_UDP_RULE = 0x1,
@@ -27,7 +32,7 @@ typedef struct auto_res_port_filtering_entry auto_res_port_filtering_e;
 typedef struct auto_res_filtering_info auto_res_filtering_db;
 
 struct prot {
-	uint8_t prot_name[10];
+	uint8_t prot_name[IP_PROTOCOL_NAME_LENGTH];
 	uint8_t prot_code;
 };
 
