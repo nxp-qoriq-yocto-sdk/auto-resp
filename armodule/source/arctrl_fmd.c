@@ -14,8 +14,6 @@
 #include <linux/etherdevice.h>
 #include <linux/module.h>
 #include <mac.h>
-#include <fsl_pm.h>
-#include <lnxwrp_fm.h>
 #include <dpaa_eth.h>
 #include "ar_common.h"
 
@@ -157,7 +155,6 @@ void ar_get_fman_stats()
 void ar_process_deep_sleep_event (uint32_t  *out_status)
 {
 	struct net_device *netdev = NULL;
-	struct dpa_priv_s *priv = NULL;
 	struct fm_port *fm_rxport = NULL;
 	struct fm_port *fm_txport = NULL;
 	t_Handle h_FmPortTx;
@@ -198,12 +195,8 @@ void ar_process_deep_sleep_event (uint32_t  *out_status)
 	ar_port_param.p_auto_res_snmp_info 	= &ar_snmp_db;
 	ar_port_param.p_auto_res_filtering_info	= &ar_wakeup_db;
 
-	/*Before entering deep sleep, Ensuring MAC and FMAN devices are on*/
-	priv = netdev_priv(netdev);
-	fsl_set_power_except((struct device *)(priv->mac_dev->dev),
-							ar_wakeup_src);
-	fsl_set_power_except((struct device *)((t_LnxWrpFmDev *)(priv->mac_dev->fm_dev))->dev,
-							ar_wakeup_src);
+	/*Before entering deep sleep, configure MAC for wakeup sources*/
+	device_set_wakeup_enable(netdev->dev.parent, ar_wakeup_src);
 
 	/*Send network device information to the FMD for
 	  configuring FM ucode. Wait for the ack*/

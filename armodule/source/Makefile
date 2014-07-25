@@ -10,7 +10,6 @@
 include $(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/ncsw_config.mk
 
 #Required extra flags
-EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/src/wrapper/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/inc/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/dpa/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/
