@@ -205,25 +205,27 @@ void ar_get_ipv4_info(struct net_device *netdev)
 				(netdev == vlan_dev_priv(dev)->real_dev) &&
 				(dev->flags & IFF_UP)) {
 
-				/*Copying MAC address*/
-				memcpy(ar_arp_tbl[index].mac, dev->dev_addr, 6);
-
-				/*Copying IPv4 address*/
 				indev = __in_dev_get_rcu(dev);
-				ifa = indev->ifa_list;
-				ar_arp_tbl[index].ip_address = ifa->ifa_address;
+				for (ifa = indev->ifa_list; ifa; ifa = ifa->ifa_next) {
 
-				/*Copying VLAN information*/
-				ar_arp_tbl[index].is_vlan    = TRUE;
-				ar_arp_tbl[index].vid        = ar_get_vlanid(dev);
+					/*Copying IPv4 address*/
+					ar_arp_tbl[index].ip_address = ifa->ifa_address;
 
-				ar_arp_db.table_size++;
-				if (ar_arp_db.table_size >= ar_arptblsize)
-					break;
-				/*Move to next index*/
-				index++;
+					/*Copying MAC address*/
+					memcpy(ar_arp_tbl[index].mac, dev->dev_addr, 6);
+
+					/*Copying VLAN information*/
+					ar_arp_tbl[index].is_vlan    = TRUE;
+					ar_arp_tbl[index].vid        = ar_get_vlanid(dev);
+
+					ar_arp_db.table_size++;
+					if (ar_arp_db.table_size >= ar_arptblsize)
+						break;
+					/*Move to next index*/
+					index++;
+				}
 			}
-			dev = next_net_device(dev);
+		dev = next_net_device(dev);
 		}
 	}
 	return;
