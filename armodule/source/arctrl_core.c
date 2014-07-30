@@ -202,7 +202,8 @@ void ar_get_ipv4_info(struct net_device *netdev)
 		dev = first_net_device(&init_net);
 		while (dev) {
 			if ((dev->priv_flags & IFF_802_1Q_VLAN) &&
-					netdev == vlan_dev_priv(dev)->real_dev) {
+				(netdev == vlan_dev_priv(dev)->real_dev) &&
+				(dev->flags & IFF_UP)) {
 
 				/*Copying MAC address*/
 				memcpy(ar_arp_tbl[index].mac, dev->dev_addr, 6);
@@ -275,7 +276,8 @@ void ar_get_ipv6_info(struct net_device *netdev)
 	dev = first_net_device(&init_net);
 	while (dev) {
 		if ((dev->priv_flags & IFF_802_1Q_VLAN) &&
-			netdev == vlan_dev_priv(dev)->real_dev) {
+			(netdev == vlan_dev_priv(dev)->real_dev) &&
+			(dev->flags & IFF_UP)) {
 
 			idev = __in6_dev_get(dev);
 			p = (&idev->addr_list)->next;
