@@ -280,9 +280,9 @@ void ar_get_ipv6_info(struct net_device *netdev)
 			(dev->flags & IFF_UP)) {
 
 			idev = __in6_dev_get(dev);
-			p = (&idev->addr_list)->next;
+			list_for_each(p, &idev->addr_list) {
 			ifa = list_entry(p, struct inet6_ifaddr, if_list);
-			if ((ifa->flags & IFA_F_TEMPORARY) && maxlim_flag_tem) {
+			if ((ifa->flags & IFA_F_TEMPORARY) && (!maxlim_flag_tem)) {
 				/*Copying IPv6 address*/
 				ar_ndp_tem_tbl[index_tem].ip_address[0] = ifa->addr.s6_addr32[0];
 				ar_ndp_tem_tbl[index_tem].ip_address[1] = ifa->addr.s6_addr32[1];
@@ -301,7 +301,7 @@ void ar_get_ipv6_info(struct net_device *netdev)
 					break;
 				/*Move to next index*/
 				index_tem++;
-			} else if ((ifa->flags & IFA_F_PERMANENT) && maxlim_flag_tgt) {
+			} else if ((ifa->flags & IFA_F_PERMANENT) && (!maxlim_flag_tgt)) {
 				/*Copying IPv6 address*/
 				ar_ndp_tgt_tbl[index_tgt].ip_address[0] = ifa->addr.s6_addr32[0];
 				ar_ndp_tgt_tbl[index_tgt].ip_address[1] = ifa->addr.s6_addr32[1];
@@ -320,6 +320,7 @@ void ar_get_ipv6_info(struct net_device *netdev)
 					break;
 				/*Move to next index*/
 				index_tgt++;
+				}
 			}
 		}
 		dev = next_net_device(dev);
