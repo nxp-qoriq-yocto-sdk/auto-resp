@@ -57,17 +57,17 @@ static struct kobj_attribute ndp_conf_det_attr = \
 				__ATTR(ndp_conflict_detect, 0644,
 				NULL, ar_ndp_conflict_flag_store);
 
-static struct kobj_attribute ip_prot_drop_on_hit_attr = \
-				__ATTR(ip_prot_drop_on_hit, 0644,
-				NULL, ar_ip_drop_flag_store);
+static struct kobj_attribute ip_prot_pass_on_hit_attr = \
+				__ATTR(ip_prot_pass_on_hit, 0644,
+				NULL, ar_ip_pass_flag_store);
 
-static struct kobj_attribute udp_port_drop_on_hit_attr = \
-				__ATTR(udp_port_drop_on_hit, 0644,
-				NULL, ar_udp_drop_flag_store);
+static struct kobj_attribute udp_port_pass_on_hit_attr = \
+				__ATTR(udp_port_pass_on_hit, 0644,
+				NULL, ar_udp_pass_flag_store);
 
-static struct kobj_attribute tcp_port_drop_on_hit_attr = \
-				__ATTR(tcp_port_drop_on_hit, 0644,
-				NULL, ar_tcp_drop_flag_store);
+static struct kobj_attribute tcp_port_pass_on_hit_attr = \
+				__ATTR(tcp_port_pass_on_hit, 0644,
+				NULL, ar_tcp_pass_flag_store);
 
 static struct kobj_attribute tcp_flag_mask_attr = \
 				__ATTR(tcp_flag_mask, 0644,
@@ -89,9 +89,9 @@ static struct attribute *ar_sysfs_attrs[] = {
 	&com_pub_string_attr.attr,
 	&arp_conf_det_attr.attr,
 	&ndp_conf_det_attr.attr,
-	&ip_prot_drop_on_hit_attr.attr,
-	&udp_port_drop_on_hit_attr.attr,
-	&tcp_port_drop_on_hit_attr.attr,
+	&ip_prot_pass_on_hit_attr.attr,
+	&udp_port_pass_on_hit_attr.attr,
+	&tcp_port_pass_on_hit_attr.attr,
 	&tcp_flag_mask_attr.attr,
 	&ar_interface_attr.attr,
 #ifdef AR_DEBUG_API
@@ -178,43 +178,43 @@ ssize_t ar_ndp_conflict_flag_store(struct kobject *kobj,
 	return count;
 }
 
-ssize_t ar_ip_drop_flag_store(struct kobject *kobj,
+ssize_t ar_ip_pass_flag_store(struct kobject *kobj,
 		struct kobj_attribute *attr,
 		const char *buf, size_t count)
 {
 	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
 	sscanf(buf, "%s", pArg);
-	ar_wakeup_db.ip_prot_drop_on_hit = *pArg-'0';
+	ar_wakeup_db.ip_prot_pass_on_hit = *pArg-'0';
 #ifdef AR_DEBUG
-	printk("%d\n", ar_wakeup_db.ip_prot_drop_on_hit);
+	printk("%d\n", ar_wakeup_db.ip_prot_pass_on_hit);
 #endif
 	kfree(pArg);
 	return count;
 }
 
-ssize_t ar_udp_drop_flag_store(struct kobject *kobj,
+ssize_t ar_udp_pass_flag_store(struct kobject *kobj,
 		struct kobj_attribute *attr,
 		const char *buf, size_t count)
 {
 	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
 	sscanf(buf, "%s", pArg);
-	ar_wakeup_db.udp_port_drop_on_hit = *pArg-'0';
+	ar_wakeup_db.udp_port_pass_on_hit = *pArg-'0';
 #ifdef AR_DEBUG
-	printk("%d\n", ar_wakeup_db.udp_port_drop_on_hit);
+	printk("%d\n", ar_wakeup_db.udp_port_pass_on_hit);
 #endif
 	kfree(pArg);
 	return count;
 }
 
-ssize_t ar_tcp_drop_flag_store(struct kobject *kobj,
+ssize_t ar_tcp_pass_flag_store(struct kobject *kobj,
 		struct kobj_attribute *attr,
 		const char *buf, size_t count)
 {
 	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
 	sscanf(buf, "%s", pArg);
-	ar_wakeup_db.tcp_port_drop_on_hit = *pArg-'0';
+	ar_wakeup_db.tcp_port_pass_on_hit = *pArg-'0';
 #ifdef AR_DEBUG
-	printk("%d\n", ar_wakeup_db.tcp_port_drop_on_hit);
+	printk("%d\n", ar_wakeup_db.tcp_port_pass_on_hit);
 #endif
 	kfree(pArg);
 	return count;

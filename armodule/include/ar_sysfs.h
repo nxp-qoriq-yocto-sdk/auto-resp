@@ -50,15 +50,15 @@ ssize_t ar_ndp_conflict_flag_store(struct kobject *kobj,
 				struct kobj_attribute *attr,
 				const char *buf, size_t count);
 
-ssize_t ar_ip_drop_flag_store(struct kobject *kobj,
+ssize_t ar_ip_pass_flag_store(struct kobject *kobj,
 				struct kobj_attribute *attr,
 				const char *buf, size_t count);
 
-ssize_t ar_udp_drop_flag_store(struct kobject *kobj,
+ssize_t ar_udp_pass_flag_store(struct kobject *kobj,
 				struct kobj_attribute *attr,
 				const char *buf, size_t count);
 
-ssize_t ar_tcp_drop_flag_store(struct kobject *kobj,
+ssize_t ar_tcp_pass_flag_store(struct kobject *kobj,
 				struct kobj_attribute *attr,
 				const char *buf, size_t count);
 

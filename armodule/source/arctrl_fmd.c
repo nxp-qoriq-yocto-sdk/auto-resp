@@ -125,11 +125,11 @@ void ar_interface_info_dump()
 				ar_wakeup_db.udp_ports_table_ptr[index].src_port_mask,
 				ar_wakeup_db.udp_ports_table_ptr[index].dst_port_mask);
 	}
-	printk("ip_prot_drop_on_hit = %d\tudp_port_drop_on_hit = %d\
-					tcp_port_drop_on_hit = %d\n",
-					ar_wakeup_db.ip_prot_drop_on_hit,
-					ar_wakeup_db.udp_port_drop_on_hit,
-					ar_wakeup_db.tcp_port_drop_on_hit);
+	printk("ip_prot_pass_on_hit = %d\tudp_port_pass_on_hit = %d\
+					tcp_port_pass_on_hit = %d\n",
+					ar_wakeup_db.ip_prot_pass_on_hit,
+					ar_wakeup_db.udp_port_pass_on_hit,
+					ar_wakeup_db.tcp_port_pass_on_hit);
 
 	return;
 }
