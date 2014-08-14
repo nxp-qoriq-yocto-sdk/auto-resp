@@ -72,11 +72,6 @@ static struct kobj_attribute tcp_port_pass_on_hit_attr = \
 static struct kobj_attribute tcp_flag_mask_attr = \
 				__ATTR(tcp_flag_mask, 0644,
 				NULL, ar_tcp_flag_mask_store);
-
-static struct kobj_attribute ar_interface_attr = \
-				__ATTR(ar_interface, 0644,
-				NULL, ar_interface_store);
-
 #ifdef AR_DEBUG_API
 static struct kobj_attribute fman_stats_attr = \
 				__ATTR(fman_stats, 0644,
@@ -93,7 +88,6 @@ static struct attribute *ar_sysfs_attrs[] = {
 	&udp_port_pass_on_hit_attr.attr,
 	&tcp_port_pass_on_hit_attr.attr,
 	&tcp_flag_mask_attr.attr,
-	&ar_interface_attr.attr,
 #ifdef AR_DEBUG_API
 	&fman_stats_attr.attr,
 #endif
@@ -230,22 +224,6 @@ ssize_t ar_tcp_flag_mask_store(struct kobject *kobj,
 	ar_wakeup_db.tcp_flags_mask = ar_wakeup_atoi(pArg);
 #ifdef AR_DEBUG
 	printk("%hx\n", ar_wakeup_db.tcp_flags_mask);
-#endif
-	kfree(pArg);
-	return count;
-}
-
-ssize_t ar_interface_store(struct kobject *kobj,
-		struct kobj_attribute *attr,
-		const char *buf, size_t count)
-{
-	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
-	sscanf(buf, "%s", pArg);
-	pArg[strlen(pArg)] = '\0';
-	memcpy(&ar_resport[0], pArg, strlen(pArg));
-	ar_resport[strlen(pArg)] = '\0';
-#ifdef AR_DEBUG
-	printk("%s\n", ar_resport);
 #endif
 	kfree(pArg);
 	return count;

@@ -43,7 +43,7 @@ struct auto_res_tables_sizes *p_ar_maxsize;
 uint32_t ar_arptblsize;
 uint32_t ar_ndptblsize;
 
-module_param(ar_resport, charp, 0644);
+module_param(ar_resport, charp, 0444);
 MODULE_PARM_DESC(ar_resport, "Configuring Auto Response port");
 
 /*Tables maintained at AR CNTRL which will be sent to FMD*/
