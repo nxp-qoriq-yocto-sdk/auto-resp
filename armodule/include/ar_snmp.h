@@ -17,7 +17,7 @@
 
 #define AR_MAX_OID_LENGTH 128
 #define AR_SNMP_TABLE_SIZE 64
-#define AR_MAX_COMM_LENGTH 16
+#define AR_SNMP_MAX_COMM_LENGTH 64
 #define AR_MAX_SNMP_MSG_SIZE 1024
 
 typedef enum ar_snmp_tool_event {

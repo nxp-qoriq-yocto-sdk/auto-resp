@@ -116,15 +116,19 @@ ssize_t ar_snmp_pvt_string_store(struct kobject *kobj,
 		struct kobj_attribute *attr,
 		const char *buf, size_t count)
 {
-	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
-	sscanf(buf, "%s", pArg);
-	pArg[strlen(pArg)] = '\0';
-	memcpy(ar_snmp_db.community_read_write_string, pArg, strlen(pArg));
-	ar_snmp_db.community_read_write_string[strlen(pArg)] = '\0';
+	uint8_t len = strlen(buf) - 1;
+
+	if (len >= (AR_SNMP_MAX_COMM_LENGTH - 3)) {
+		PRINT_INFO("Error: String too big\n");
+		return count;
+	}
+	ar_snmp_db.community_read_write_string[0] = 0x04;  /*String type*/
+	ar_snmp_db.community_read_write_string[1] = len; /*String len*/
+	memcpy(&(ar_snmp_db.community_read_write_string[2]), buf, len);
+	ar_snmp_db.community_read_write_string[len + 2] = '\0';
 #ifdef AR_DEBUG
-	printk("%s\n", ar_snmp_db.community_read_write_string);
+	printk("%s\n", &(ar_snmp_db.community_read_write_string[2]));
 #endif
-	kfree(pArg);
 	return count;
 }
 
@@ -132,15 +136,19 @@ ssize_t ar_snmp_pub_string_store(struct kobject *kobj,
 		struct kobj_attribute *attr,
 		const char *buf, size_t count)
 {
-	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
-	sscanf(buf, "%s", pArg);
-	pArg[strlen(pArg)] = '\0';
-	memcpy(ar_snmp_db.community_read_only_string, pArg, strlen(pArg));
-	ar_snmp_db.community_read_only_string[strlen(pArg)] = '\0';
+	uint8_t len = strlen(buf) - 1;
+
+	if (len >= (AR_SNMP_MAX_COMM_LENGTH - 3)) {
+		PRINT_INFO("Error: String too big\n");
+		return count;
+	}
+	ar_snmp_db.community_read_only_string[0] = 0x04;   /*String type*/
+	ar_snmp_db.community_read_only_string[1] = len; /*String len*/
+	memcpy(&(ar_snmp_db.community_read_only_string[2]), buf, len);
+	ar_snmp_db.community_read_only_string[len + 2] = '\0';
 #ifdef AR_DEBUG
-	printk("%s\n", ar_snmp_db.community_read_only_string);
+	printk("%s\n", &(ar_snmp_db.community_read_only_string[2]));
 #endif
-	kfree(pArg);
 	return count;
 }
 

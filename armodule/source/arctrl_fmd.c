@@ -93,8 +93,12 @@ void ar_interface_info_dump()
 	printk("getall_flag = %d\tcomunity_public_string = %s\
 					comunity_privat_string = %s\n",
 					ar_snmp_db.control,
-					ar_snmp_db.community_read_write_string,
-					ar_snmp_db.community_read_only_string);
+					&(ar_snmp_db.community_read_only_string[2]),
+					&(ar_snmp_db.community_read_write_string[2]));
+	printk("Private type = %0x\t Private Length = %x \
+		Public type = %0x\t Public Length = %x\n",
+					ar_snmp_db.community_read_write_string[0], ar_snmp_db.community_read_write_string[1],
+					ar_snmp_db.community_read_only_string[0], ar_snmp_db.community_read_only_string[1]);
 	printk("===========================================================\n");
 	printk("IP Protocols\n");
 	printk("index\tProtocol\n");

@@ -34,12 +34,14 @@ uint32_t ar_snmp_init_db()
 
 	memset(&ar_snmp_db, 0, sizeof(ar_snmp_db));
 	memset(ar_snmp_entity, 0, sizeof(auto_res_snmp_e) * ar_snmp_tblsize);
-	ar_snmp_db.community_read_write_string = (uint8_t *)kzalloc(16, GFP_KERNEL);
+	ar_snmp_db.community_read_write_string = (uint8_t *)kzalloc(AR_SNMP_MAX_COMM_LENGTH,
+									GFP_KERNEL);
 	if (!ar_snmp_db.community_read_write_string) {
 		PRINT_INFO("Memory Allocation failed\n");
 		return -AR_SUCCESS;
 	}
-	ar_snmp_db.community_read_only_string = (uint8_t *)kzalloc(16, GFP_KERNEL);
+	ar_snmp_db.community_read_only_string = (uint8_t *)kzalloc(AR_SNMP_MAX_COMM_LENGTH,
+									GFP_KERNEL);
 	if (!ar_snmp_db.community_read_only_string) {
 		kfree(ar_snmp_db.community_read_write_string);
 		PRINT_INFO("Memory Allocation failed\n");
@@ -48,12 +50,18 @@ uint32_t ar_snmp_init_db()
 	priv_str_len = strlen(private_str);
 	pub_str_len = strlen(public_str);
 
-	memcpy(ar_snmp_db.community_read_write_string, private_str, priv_str_len);
-	memcpy(ar_snmp_db.community_read_only_string, public_str, pub_str_len);
-	ar_snmp_db.community_read_write_string[priv_str_len] = '\0';
-	ar_snmp_db.community_read_only_string[pub_str_len] = '\0';
+	ar_snmp_db.community_read_write_string[0] = 0x04;  /*String type*/
+	ar_snmp_db.community_read_write_string[1] = priv_str_len; /*String len*/
+
+	ar_snmp_db.community_read_only_string[0] = 0x04;   /*String type*/
+	ar_snmp_db.community_read_only_string[1] = pub_str_len; /*String len*/
+
+	memcpy(&(ar_snmp_db.community_read_write_string[2]), private_str, priv_str_len);
+	memcpy(&(ar_snmp_db.community_read_only_string[2]), public_str, pub_str_len);
+	ar_snmp_db.community_read_write_string[priv_str_len + 2] = '\0';
+	ar_snmp_db.community_read_only_string[pub_str_len + 2] = '\0';
 	ar_snmp_db.control = 0;
-	ar_snmp_db.max_snmp_msg_length = AR_MAX_SNMP_MSG_SIZE;
+	ar_snmp_db.max_snmp_msg_length = p_ar_maxsize->max_num_of_snmp_char;
 	ar_snmp_db.oid_table = ar_snmp_entity;
 	return AR_SUCCESS;
 }
