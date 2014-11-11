@@ -29,7 +29,6 @@
 #include "ar_sysfs.h"
 
 extern struct auto_res_arp_info ar_arp_db;
-extern struct auto_res_ndp_info ar_nd_db;
 extern auto_res_snmp_db ar_snmp_db;
 extern auto_res_filtering_db ar_wakeup_db;
 extern char ar_resport[10];
@@ -52,10 +51,6 @@ static struct kobj_attribute com_pub_string_attr = \
 static struct kobj_attribute arp_conf_det_attr = \
 				__ATTR(arp_conflict_detect, 0644,
 				NULL, ar_arp_conflict_flag_store);
-
-static struct kobj_attribute ndp_conf_det_attr = \
-				__ATTR(ndp_conflict_detect, 0644,
-				NULL, ar_ndp_conflict_flag_store);
 
 static struct kobj_attribute ip_prot_pass_on_hit_attr = \
 				__ATTR(ip_prot_pass_on_hit, 0644,
@@ -83,7 +78,6 @@ static struct attribute *ar_sysfs_attrs[] = {
 	&com_pvt_string_attr.attr,
 	&com_pub_string_attr.attr,
 	&arp_conf_det_attr.attr,
-	&ndp_conf_det_attr.attr,
 	&ip_prot_pass_on_hit_attr.attr,
 	&udp_port_pass_on_hit_attr.attr,
 	&tcp_port_pass_on_hit_attr.attr,
@@ -161,20 +155,6 @@ ssize_t ar_arp_conflict_flag_store(struct kobject *kobj,
 	ar_arp_db.enable_conflict_detection = *pArg-'0';
 #ifdef AR_DEBUG
 	printk("arp_conflict_detection = %d\n", ar_arp_db.enable_conflict_detection);
-#endif
-	kfree(pArg);
-	return count;
-}
-
-ssize_t ar_ndp_conflict_flag_store(struct kobject *kobj,
-		struct kobj_attribute *attr,
-		const char *buf, size_t count)
-{
-	char *pArg = (char *)kzalloc(strlen(buf) + 1, GFP_KERNEL);
-	sscanf(buf, "%s", pArg);
-	ar_nd_db.enable_conflict_detection = *pArg-'0';
-#ifdef AR_DEBUG
-	printk("ndp_conflict_detection = %d\n", ar_nd_db.enable_conflict_detection);
 #endif
 	kfree(pArg);
 	return count;

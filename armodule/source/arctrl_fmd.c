@@ -77,7 +77,6 @@ void ar_interface_info_dump()
 		printk("%u\t%u\n", ar_nd_db.auto_res_table_assigned[index].is_vlan,
 				ar_nd_db.auto_res_table_assigned[index].vid);
 	}
-	printk("ndp_conflict_detection = %d\n", ar_nd_db.enable_conflict_detection);
 	printk("=========================================================\n");
 	printk("index\toidSize\t\toidVal\t\tresSize\t\tresVal\n");
 	printk("=========================================================\n");
