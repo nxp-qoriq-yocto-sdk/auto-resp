@@ -7,10 +7,10 @@
 # */
 
 # Required include definitions
-include $(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/ncsw_config.mk
+include $(KERNEL_PATH)/drivers/net/ethernet/freescale/sdk_fman/ncsw_config.mk
 
 #Required extra flags
-EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/fman/inc/
+EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/sdk_fman/inc/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/dpa/
 EXTRA_CFLAGS += -I$(KERNEL_PATH)/drivers/net/ethernet/freescale/
 EXTRA_CFLAGS +=	-I$(KERNEL_PATH)/arch/powerpc/include/asm
